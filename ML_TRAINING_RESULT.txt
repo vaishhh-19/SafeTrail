@@ -1,0 +1,55 @@
+======================================================================
+SafeTrail ML — Global + Area + Road Intelligence
+======================================================================
+Samples: 4550
+Areas learned: 18
+Road segments learned: 2562
+Global precision: 1.0
+Area precision: 1.0
+Road precision: 1.0
+
+Area metrics:
+  Chickpet             precision=1.000 recall=1.000 f1=1.000
+  KR_Puram             precision=1.000 recall=1.000 f1=1.000
+  KR_Market            precision=1.000 recall=1.000 f1=1.000
+  Shivajinagar         precision=1.000 recall=1.000 f1=1.000
+  Majestic             precision=1.000 recall=1.000 f1=1.000
+  Electronic_City      precision=1.000 recall=1.000 f1=1.000
+  Jayanagar            precision=1.000 recall=1.000 f1=1.000
+  Koramangala          precision=1.000 recall=1.000 f1=1.000
+  Hebbal               precision=1.000 recall=1.000 f1=1.000
+  Rajajinagar          precision=1.000 recall=1.000 f1=1.000
+  Yeshwanthpur         precision=1.000 recall=1.000 f1=1.000
+  Jyothy_Institute     precision=1.000 recall=1.000 f1=1.000
+  Bannerghatta         precision=1.000 recall=1.000 f1=1.000
+  Marathahalli         precision=1.000 recall=1.000 f1=1.000
+  Indiranagar          precision=1.000 recall=1.000 f1=1.000
+  HSR_Layout           precision=1.000 recall=1.000 f1=1.000
+  Whitefield           precision=1.000 recall=1.000 f1=1.000
+  Bellandur            precision=1.000 recall=1.000 f1=1.000
+
+Classification report (global):
+              precision    recall  f1-score   support
+
+      danger       1.00      1.00      1.00       400
+    moderate       1.00      1.00      1.00       300
+        safe       1.00      1.00      1.00       210
+
+    accuracy                           1.00       910
+   macro avg       1.00      1.00      1.00       910
+weighted avg       1.00      1.00      1.00       910
+
+Confusion matrix:
+[[400   0   0]
+ [  0 300   0]
+ [  0   0 210]]
+
+Training complete.
+
+Spreadsheet runtime warmup failed during python startup
+Traceback (most recent call last):
+  File "/tmp/tmp.L2TH2Y5coc/artifact_tool_v2-2.8.22/artifact_tool/patches/warm_spreadsheet_runtime_on_startup.py", line 26, in warm_spreadsheet_runtime_on_startup
+  File "/tmp/tmp.L2TH2Y5coc/artifact_tool_v2-2.8.22/artifact_tool/spreadsheet_warmup.py", line 772, in warm_spreadsheet_runtime
+  File "/tmp/tmp.L2TH2Y5coc/artifact_tool_v2-2.8.22/artifact_tool/rpc/connection.py", line 37, in get_or_create_client
+  File "/tmp/tmp.L2TH2Y5coc/artifact_tool_v2-2.8.22/artifact_tool/rpc/daemon.py", line 124, in start_daemon
+TimeoutError: Timed out waiting for artifact tool daemon socket. Set ARTIFACT_TOOL_RPC_DAEMON_STARTUP_TIMEOUT_S=<seconds> to increase the limit.

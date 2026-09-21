@@ -1,0 +1,263 @@
+{
+  "evaluation": "stratified 80/20 holdout; bundled dataset has no real dates",
+  "samples": 4550,
+  "training_samples": 3640,
+  "test_samples": 910,
+  "areas": 18,
+  "road_segments": 2562,
+  "global": {
+    "accuracy": 1.0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+  },
+  "area_calibrated": {
+    "accuracy": 1.0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+  },
+  "road_calibrated": {
+    "accuracy": 1.0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+  },
+  "area_metrics": [
+    {
+      "area_name": "Chickpet",
+      "test_samples": 69,
+      "accuracy": 1.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "danger_rate": 0.9858,
+      "sample_count": 323,
+      "centroid_lat": 12.968085,
+      "centroid_lon": 77.575381
+    },
+    {
+      "area_name": "KR_Puram",
+      "test_samples": 75,
+      "accuracy": 1.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "danger_rate": 0.9858,
+      "sample_count": 323,
+      "centroid_lat": 13.005341,
+      "centroid_lon": 77.667537
+    },
+    {
+      "area_name": "KR_Market",
+      "test_samples": 77,
+      "accuracy": 1.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "danger_rate": 0.9857,
+      "sample_count": 319,
+      "centroid_lat": 12.962156,
+      "centroid_lon": 77.577345
+    },
+    {
+      "area_name": "Shivajinagar",
+      "test_samples": 79,
+      "accuracy": 1.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "danger_rate": 0.9857,
+      "sample_count": 319,
+      "centroid_lat": 12.984783,
+      "centroid_lon": 77.600834
+    },
+    {
+      "area_name": "Majestic",
+      "test_samples": 97,
+      "accuracy": 1.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "danger_rate": 0.9855,
+      "sample_count": 316,
+      "centroid_lat": 12.977091,
+      "centroid_lon": 77.5713
+    },
+    {
+      "area_name": "Electronic_City",
+      "test_samples": 49,
+      "accuracy": 1.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "danger_rate": 0.5059,
+      "sample_count": 202,
+      "centroid_lat": 12.840044,
+      "centroid_lon": 77.67762
+    },
+    {
+      "area_name": "Jayanagar",
+      "test_samples": 48,
+      "accuracy": 1.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "danger_rate": 0.5059,
+      "sample_count": 202,
+      "centroid_lat": 12.92522,
+      "centroid_lon": 77.594154
+    },
+    {
+      "area_name": "Koramangala",
+      "test_samples": 45,
+      "accuracy": 1.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "danger_rate": 0.5059,
+      "sample_count": 202,
+      "centroid_lat": 12.936259,
+      "centroid_lon": 77.622444
+    },
+    {
+      "area_name": "Hebbal",
+      "test_samples": 50,
+      "accuracy": 1.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "danger_rate": 0.5059,
+      "sample_count": 199,
+      "centroid_lat": 13.034353,
+      "centroid_lon": 77.596502
+    },
+    {
+      "area_name": "Rajajinagar",
+      "test_samples": 53,
+      "accuracy": 1.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "danger_rate": 0.5059,
+      "sample_count": 199,
+      "centroid_lat": 12.991052,
+      "centroid_lon": 77.553251
+    },
+    {
+      "area_name": "Yeshwanthpur",
+      "test_samples": 54,
+      "accuracy": 1.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "danger_rate": 0.506,
+      "sample_count": 196,
+      "centroid_lat": 13.028186,
+      "centroid_lon": 77.550884
+    },
+    {
+      "area_name": "Jyothy_Institute",
+      "test_samples": 25,
+      "accuracy": 1.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "danger_rate": 0.0518,
+      "sample_count": 128,
+      "centroid_lat": 12.916234,
+      "centroid_lon": 77.558297
+    },
+    {
+      "area_name": "Bannerghatta",
+      "test_samples": 24,
+      "accuracy": 1.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "danger_rate": 0.0533,
+      "sample_count": 124,
+      "centroid_lat": 12.857867,
+      "centroid_lon": 77.596232
+    },
+    {
+      "area_name": "Marathahalli",
+      "test_samples": 31,
+      "accuracy": 1.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "danger_rate": 0.0545,
+      "sample_count": 121,
+      "centroid_lat": 12.956303,
+      "centroid_lon": 77.697463
+    },
+    {
+      "area_name": "Indiranagar",
+      "test_samples": 34,
+      "accuracy": 1.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "danger_rate": 0.0558,
+      "sample_count": 118,
+      "centroid_lat": 12.978312,
+      "centroid_lon": 77.640974
+    },
+    {
+      "area_name": "HSR_Layout",
+      "test_samples": 36,
+      "accuracy": 1.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "danger_rate": 0.0562,
+      "sample_count": 117,
+      "centroid_lat": 12.912422,
+      "centroid_lon": 77.639269
+    },
+    {
+      "area_name": "Whitefield",
+      "test_samples": 29,
+      "accuracy": 1.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "danger_rate": 0.0562,
+      "sample_count": 117,
+      "centroid_lat": 12.969609,
+      "centroid_lon": 77.751293
+    },
+    {
+      "area_name": "Bellandur",
+      "test_samples": 35,
+      "accuracy": 1.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "danger_rate": 0.0571,
+      "sample_count": 115,
+      "centroid_lat": 12.925112,
+      "centroid_lon": 77.676826
+    }
+  ],
+  "classes": [
+    "danger",
+    "moderate",
+    "safe"
+  ],
+  "feature_importance": {
+    "feedback_score": 0.3642,
+    "risk_score": 0.2202,
+    "hotspot_proximity": 0.1312,
+    "crime_count": 0.1106,
+    "hotspot_distance": 0.1026,
+    "latitude": 0.0327,
+    "longitude": 0.0286,
+    "hour": 0.0071,
+    "is_night": 0.002,
+    "is_evening": 0.0005,
+    "day_of_week": 0.0003,
+    "is_weekend": 0.0001
+  }
+}

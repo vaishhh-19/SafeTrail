@@ -1,0 +1,2 @@
+latitude,longitude,area_name,hour,day_of_week,crime_count,incident_type,feedback_score,risk_label
+12.841291814566985,77.51177493050488,"safe, if you know the place well",6,5,20,user_reported,4.0,safe
