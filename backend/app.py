@@ -1,3 +1,4 @@
+import os
 from flask import Flask, jsonify
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
@@ -8,7 +9,20 @@ def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
 
-    CORS(app, origins=["http://localhost:5173"])
+    cors_env = os.getenv("CORS_ORIGINS", "")
+    if cors_env.strip() == "*":
+        allowed_origins = "*"
+    elif cors_env.strip():
+        allowed_origins = [o.strip() for o in cors_env.split(",") if o.strip()]
+    else:
+        allowed_origins = [
+            "http://localhost:5173",
+            "http://localhost:3000",
+            "http://127.0.0.1:5173",
+            "https://vaishhh-19.github.io",
+        ]
+
+    CORS(app, origins=allowed_origins, supports_credentials=True)
     JWTManager(app)
     init_db()
 
@@ -52,6 +66,13 @@ def create_app():
 
     return app
 
-if __name__ == "__main__":
+try:
     app = create_app()
-    app.run(debug=Config.DEBUG, port=5000)
+except Exception:
+    app = None
+
+if __name__ == "__main__":
+    if app is None:
+        app = create_app()
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port, debug=Config.DEBUG)
