@@ -41,62 +41,85 @@ export default function MapPage() {
 
   return (
     <MainLayout>
-      <div className="p-6 space-y-4">
-
+      <div className="page-shell space-y-5">
         {/* Header */}
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 rounded-3xl bg-gradient-to-r from-indigo-500/10 via-purple-500/10 to-pink-500/10 border border-indigo-100 shadow-sm">
           <div>
-            <h1 className="text-2xl font-bold text-slate-800 flex items-center gap-2">
-              <MapPin className="w-6 h-6 text-brand-500" />
-              Live Safety Map
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-800 flex items-center gap-3">
+              <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 text-white flex items-center justify-center shadow-lg shadow-indigo-300">
+                <MapPin className="w-5 h-5" />
+              </div>
+              <span>Live Safety Map</span>
             </h1>
-            <p className="text-slate-500 text-sm mt-1">
-              All geofence zones in Bangalore
+            <p className="text-slate-500 text-sm mt-1 font-medium">
+              Real-time geofence corridors, high-risk intersections, and safe havens
             </p>
           </div>
-          <RiskBadge level={riskLevel} size="md" />
+          <div>
+            <RiskBadge level={riskLevel} size="md" />
+          </div>
         </div>
 
-        {/* Filter buttons */}
-        <div className="flex items-center gap-2 flex-wrap">
-          <Layers className="w-4 h-4 text-slate-500" />
-          {[
-            { key: "all",      label: `All (${zoneCounts.all})`,           color: "bg-slate-100 text-slate-800"         },
-            { key: "safe",     label: `Safe (${zoneCounts.safe})`,         color: "bg-green-100 text-safe"           },
-            { key: "moderate", label: `Moderate (${zoneCounts.moderate})`, color: "bg-orange-100 text-moderate"   },
-            { key: "danger",   label: `Danger (${zoneCounts.danger})`,     color: "bg-red-100 text-danger"       },
-          ].map(({ key, label, color }) => (
-            <button key={key}
-              onClick={() => setFilter(key)}
-              className={`px-3 py-1.5 rounded-xl text-sm font-medium transition border ${
-                filter === key
-                  ? color + " border-slate-300"
-                  : "bg-white text-slate-500 border-slate-100 hover:bg-slate-100"
-              }`}>
-              {label}
-            </button>
-          ))}
-        </div>
+        {/* Filter buttons & Controls */}
+        <div className="flex flex-wrap items-center justify-between gap-3 p-2 bg-white/70 backdrop-blur-md rounded-2xl border border-white shadow-sm">
+          <div className="flex items-center gap-2 flex-wrap">
+            <div className="px-2.5 py-1 text-xs font-bold text-slate-400 flex items-center gap-1.5 uppercase tracking-wider">
+              <Layers className="w-3.5 h-3.5 text-indigo-500" /> Filter:
+            </div>
+            {[
+              {
+                key: "all",
+                label: "All Zones",
+                count: zoneCounts.all,
+                active: "bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-md shadow-indigo-500/30",
+              },
+              {
+                key: "safe",
+                label: "Safe Havens",
+                count: zoneCounts.safe,
+                active: "bg-gradient-to-r from-emerald-500 to-teal-600 text-white shadow-md shadow-emerald-500/30",
+              },
+              {
+                key: "moderate",
+                label: "Moderate",
+                count: zoneCounts.moderate,
+                active: "bg-gradient-to-r from-amber-500 to-orange-600 text-white shadow-md shadow-orange-500/30",
+              },
+              {
+                key: "danger",
+                label: "Danger Areas",
+                count: zoneCounts.danger,
+                active: "bg-gradient-to-r from-rose-500 to-red-600 text-white shadow-md shadow-rose-500/35",
+              },
+            ].map(({ key, label, count, active }) => (
+              <button
+                key={key}
+                onClick={() => setFilter(key)}
+                className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all duration-200 flex items-center gap-2 ${
+                  filter === key
+                    ? active
+                    : "bg-white text-slate-600 border border-slate-200/80 hover:bg-slate-50 hover:text-slate-900"
+                }`}
+              >
+                <span>{label}</span>
+                <span className={`px-1.5 py-0.2 rounded-full text-[10px] ${filter === key ? "bg-white/25 text-white" : "bg-slate-100 text-slate-600 font-extrabold"}`}>
+                  {count}
+                </span>
+              </button>
+            ))}
+          </div>
 
-        {/* GPS Status */}
-        {loading && (
-          <div className="flex items-center gap-2 text-brand-500 text-sm">
-            <RefreshCw className="w-4 h-4 animate-spin" />
-            Getting your location...
-          </div>
-        )}
-        {error && (
-          <div className="text-danger text-sm">GPS Error: {error}</div>
-        )}
-        {location && (
-          <div className="text-slate-500 text-xs">
-            📍 Your location: {location.lat.toFixed(6)}, {location.lon.toFixed(6)}
-            {" "}• Accuracy: ±{Math.round(location.accuracy)}m
-          </div>
-        )}
+          {/* GPS Status */}
+          {location && (
+            <div className="px-3 py-1 rounded-xl bg-cyan-50 border border-cyan-200/70 text-cyan-800 text-xs font-mono font-semibold flex items-center gap-2 ml-auto">
+              <span className="w-2 h-2 rounded-full bg-cyan-500 animate-pulse" />
+              <span>{location.lat.toFixed(4)}, {location.lon.toFixed(4)} (±{Math.round(location.accuracy)}m)</span>
+            </div>
+          )}
+        </div>
 
         {/* Full Map */}
-        <div className="glass p-3" style={{ height: "600px" }}>
+        <div className="glass p-3.5 border border-white/90 shadow-xl shadow-indigo-500/5" style={{ height: "620px" }}>
           <LiveMap
             location={location}
             zones={filteredZones}

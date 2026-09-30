@@ -65,44 +65,87 @@ export default function Alerts() {
 
   return (
     <MainLayout>
-      <div className="p-6 space-y-6">
+      <div className="page-shell space-y-6">
         {/* Header */}
-        <div>
-          <h1 className="text-2xl font-bold text-slate-800 flex items-center gap-2">
-            <Bell className="w-6 h-6 text-brand-500" />
-            Alert History
-          </h1>
-          <p className="text-slate-500 text-sm mt-1">
-            All safety alerts triggered for your account
-          </p>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 rounded-3xl bg-gradient-to-r from-amber-500/10 via-rose-500/10 to-indigo-500/10 border border-amber-100 shadow-sm">
+          <div>
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-800 flex items-center gap-3">
+              <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-600 text-white flex items-center justify-center shadow-lg shadow-amber-300">
+                <Bell className="w-5 h-5" />
+              </div>
+              <span>Safety Alert Feed</span>
+            </h1>
+            <p className="text-slate-500 text-sm mt-1 font-medium">
+              Geofence intrusion warnings, SOS distress calls, and automated incident logs
+            </p>
+          </div>
         </div>
 
         {/* Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {[
-            { label: "Total",    value: alerts.length,                                          color: "text-slate-800"    },
-            { label: "Active",   value: alerts.filter(a => a.status === "active").length,       color: "text-danger"   },
-            { label: "Resolved", value: alerts.filter(a => a.status === "resolved").length,     color: "text-safe"     },
-            { label: "SOS",      value: alerts.filter(a => a.alert_type === "sos").length,      color: "text-moderate" },
-          ].map(({ label, value, color }) => (
-            <div key={label} className="glass p-4 text-center">
-              <p className={`text-2xl font-bold ${color}`}>{value}</p>
-              <p className="text-slate-500 text-xs mt-1">{label}</p>
+            {
+              label: "Total Logged",
+              value: alerts.length,
+              gradient: "from-indigo-500 to-purple-600",
+              card: "card-vibrant-indigo",
+              text: "text-indigo-600",
+            },
+            {
+              label: "Active Threats",
+              value: alerts.filter(a => a.status === "active").length,
+              gradient: "from-rose-500 to-red-600",
+              card: "card-vibrant-rose",
+              text: "text-rose-600",
+              pulse: true,
+            },
+            {
+              label: "Safely Resolved",
+              value: alerts.filter(a => a.status === "resolved").length,
+              gradient: "from-emerald-500 to-teal-600",
+              card: "card-vibrant-emerald",
+              text: "text-emerald-600",
+            },
+            {
+              label: "SOS Panic Calls",
+              value: alerts.filter(a => a.alert_type === "sos").length,
+              gradient: "from-amber-500 to-orange-600",
+              card: "card-vibrant-amber",
+              text: "text-amber-600",
+            },
+          ].map(({ label, value, card, text, pulse }) => (
+            <div key={label} className={`${card} glass-hover p-4 sm:p-5 rounded-3xl text-center relative overflow-hidden`}>
+              {pulse && value > 0 && (
+                <span className="absolute top-3 right-3 flex h-2.5 w-2.5">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75" />
+                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-rose-500" />
+                </span>
+              )}
+              <p className={`text-3xl sm:text-4xl font-extrabold ${text} tracking-tight`}>{value}</p>
+              <p className="text-slate-600 text-xs font-bold uppercase tracking-wider mt-2">{label}</p>
             </div>
           ))}
         </div>
 
         {/* Filters */}
-        <div className="flex gap-2 flex-wrap">
-          {["all", "active", "danger_zone", "sos", "moderate_zone"].map(f => (
-            <button key={f}
-              onClick={() => setFilter(f)}
-              className={`px-3 py-1.5 rounded-xl text-xs font-medium transition border ${
-                filter === f
-                  ? "bg-brand-100 text-brand-500 border-brand-200"
-                  : "bg-white text-slate-500 border-slate-100 hover:bg-slate-100"
-              }`}>
-              {f.replace("_", " ").toUpperCase()}
+        <div className="flex gap-2 flex-wrap p-2 bg-white/70 backdrop-blur-md rounded-2xl border border-white shadow-sm">
+          {[
+            { key: "all", label: "All Alerts", activeClass: "bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-md shadow-indigo-500/25" },
+            { key: "active", label: "Active Threat", activeClass: "bg-gradient-to-r from-rose-500 to-red-600 text-white shadow-md shadow-rose-500/25" },
+            { key: "danger_zone", label: "Danger Zones", activeClass: "bg-gradient-to-r from-red-600 to-rose-700 text-white shadow-md shadow-red-500/25" },
+            { key: "sos", label: "SOS Alerts", activeClass: "bg-gradient-to-r from-orange-500 to-rose-600 text-white shadow-md shadow-orange-500/25" },
+            { key: "moderate_zone", label: "Moderate Zones", activeClass: "bg-gradient-to-r from-amber-500 to-yellow-600 text-white shadow-md shadow-amber-500/25" },
+          ].map(({ key, label, activeClass }) => (
+            <button
+              key={key}
+              onClick={() => setFilter(key)}
+              className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all duration-200 ${
+                filter === key
+                  ? activeClass
+                  : "bg-white text-slate-600 border border-slate-200/80 hover:bg-slate-50 hover:text-slate-900"
+              }`}
+            >
+              {label}
             </button>
           ))}
         </div>
