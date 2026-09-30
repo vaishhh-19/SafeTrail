@@ -6,7 +6,7 @@ import API, { updatePrimaryContact } from "../services/api";
 import {
   User, Phone, Mail, Heart, Home,
   Plus, Trash2, Save, CheckCircle,
-  AlertCircle, Shield, Pencil, X
+  AlertCircle, Shield, Pencil, X, Sparkles, LogOut
 } from "lucide-react";
 
 const relations = ["Parent", "Sibling", "Spouse", "Friend", "Guardian", "Other"];
@@ -63,10 +63,11 @@ export default function Profile() {
       console.error(e);
     }
   };
+
   const handleLogout = () => {
-  logout();
-  navigate("/login");
-};
+    logout();
+    navigate("/login");
+  };
 
   const handleProfileSave = async () => {
     setSaving(true);
@@ -98,13 +99,7 @@ export default function Profile() {
     setError("");
     try {
       const res = await API.post("/api/user/emergency-contact", newContact);
-      setContacts(prev => [...prev, {
-        id:       res.data.id,
-        name:     newContact.name,
-        phone:    newContact.phone,
-        email:    newContact.email,
-        relation: newContact.relation,
-      }]);
+      setContacts([...contacts, res.data.contact]);
       setNewContact({ name:"", phone:"", email:"", relation:"Parent" });
       setShowAddForm(false);
       setSuccess("Emergency contact added!");
@@ -118,9 +113,9 @@ export default function Profile() {
 
   const openEditPrimary = (contact) => {
     setPrimaryForm({
-      name:     contact.name     || "",
-      phone:    contact.phone    || "",
-      email:    contact.email    || "",
+      name:     contact.name,
+      phone:    contact.phone,
+      email:    contact.email || "",
       relation: contact.relation || "Other",
     });
     setEditingPrimary(true);
@@ -142,7 +137,7 @@ export default function Profile() {
     try {
       const res = await updatePrimaryContact(primaryForm);
       const token = localStorage.getItem("safetrail_token");
-      login(token, res.data.user); // keeps AuthContext (and SOS/AlertPopup) in sync
+      login(token, res.data.user);
       setContacts(prev => prev.map(c =>
         c.source === "registration" ? { ...c, ...primaryForm, source: "registration" } : c
       ));
@@ -172,86 +167,111 @@ export default function Profile() {
   };
 
   const bloodGroups = ["A+","A-","B+","B-","AB+","AB-","O+","O-"];
-  const inputClass  = "w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-slate-800 placeholder-gray-600 focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition";
+  const inputClass  = "w-full bg-slate-50/80 border border-slate-200 rounded-2xl px-4 py-3 text-sm text-slate-800 focus:bg-white";
 
   return (
     <MainLayout>
-      <div className="p-6 space-y-6 max-w-3xl mx-auto st-v2-page">
+      <div className="page-shell space-y-6 max-w-3xl mx-auto">
 
-        <div className="st-v2-hero">
-          <div className="relative z-10">
-          <h1 className="text-3xl font-extrabold flex items-center gap-2">
-            <User className="w-6 h-6 text-brand-500" />
-            My Profile
-          </h1>
-          <p className="text-white/80 text-sm mt-1">
-            Manage your personal info and your complete emergency safety circle.
-          </p>
-          <div className="mt-4 inline-flex items-center gap-2 bg-white/15 rounded-full px-3 py-1.5 text-xs font-bold backdrop-blur">
-            🛡️ {contacts.length} emergency contact{contacts.length === 1 ? "" : "s"} configured
-          </div>
+        {/* Hero Header */}
+        <div className="relative overflow-hidden rounded-3xl p-6 sm:p-7 text-white shadow-xl shadow-pink-500/20 bg-gradient-to-r from-pink-600 via-rose-600 to-indigo-600 animated-gradient border border-white/20">
+          <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/20 backdrop-blur-md text-white text-xs font-bold uppercase tracking-wider mb-2">
+                <Sparkles className="w-3 h-3 text-yellow-300" />
+                Personal Safety Profile
+              </div>
+              <h1 className="text-2xl sm:text-3xl font-black tracking-tight flex items-center gap-3">
+                <span>{user?.name || "My Account"}</span>
+              </h1>
+              <p className="text-white/90 text-sm mt-1 max-w-lg font-medium">
+                Manage your credentials, medical metadata, and your linked guardian circle.
+              </p>
+            </div>
+            <div className="shrink-0 bg-white/20 backdrop-blur-md px-4 py-2 rounded-2xl border border-white/30 text-xs font-extrabold flex items-center gap-1.5 shadow-md">
+              <Shield className="w-4 h-4 text-emerald-300" />
+              <span>{contacts.length} Guardians Active</span>
+            </div>
           </div>
         </div>
 
         {success && (
-          <div className="flex items-center gap-2 bg-green-50 border border-green-200 text-safe rounded-xl px-4 py-3 text-sm">
-            <CheckCircle className="w-4 h-4 shrink-0" />{success}
+          <div className="flex items-center gap-3 bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-300 text-emerald-800 rounded-2xl p-4 text-sm font-bold shadow-sm">
+            <CheckCircle className="w-4 h-4 text-emerald-600 shrink-0" />
+            <span>{success}</span>
           </div>
         )}
         {error && (
-          <div className="flex items-center gap-2 bg-red-50 border border-red-200 text-danger rounded-xl px-4 py-3 text-sm">
-            <AlertCircle className="w-4 h-4 shrink-0" />{error}
-            <button onClick={() => setError("")} className="ml-auto text-xs">✕</button>
+          <div className="flex items-center gap-3 bg-red-50 border border-red-200 text-rose-600 rounded-2xl p-4 text-sm font-semibold">
+            <AlertCircle className="w-4 h-4 shrink-0" />
+            <span>{error}</span>
+            <button onClick={() => setError("")} className="ml-auto text-xs font-black">✕</button>
           </div>
         )}
 
-        {/* Personal Info */}
-        <div className="glass p-6 space-y-4">
-          <h2 className="text-slate-800 font-semibold flex items-center gap-2">
-            <User className="w-4 h-4 text-brand-500" />
-            Personal Information
+        {/* Personal Info Card */}
+        <div className="glass p-6 sm:p-7 border border-white/90 shadow-xl shadow-indigo-500/10 space-y-5">
+          <h2 className="text-slate-800 font-extrabold text-base flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 text-white flex items-center justify-center shadow-md shadow-indigo-300">
+              <User className="w-4 h-4" />
+            </div>
+            <span>Personal Information</span>
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="text-slate-500 text-sm mb-1 block">Full Name</label>
+              <label className="text-xs font-extrabold text-slate-600 uppercase tracking-wider mb-1.5 block">Full Name</label>
               <div className="relative">
-                <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                <input type="text" value={profile.name}
+                <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-indigo-400" />
+                <input
+                  type="text"
+                  value={profile.name}
                   onChange={e => setProfile({...profile, name: e.target.value})}
-                  className={`${inputClass} pl-10`} placeholder="Your name" />
+                  className={`${inputClass} pl-10`}
+                  placeholder="Your Name"
+                />
               </div>
             </div>
 
             <div>
-              <label className="text-slate-500 text-sm mb-1 block">Phone Number</label>
+              <label className="text-xs font-extrabold text-slate-600 uppercase tracking-wider mb-1.5 block">Phone Number</label>
               <div className="relative">
-                <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                <input type="tel" value={profile.phone}
+                <Phone className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-indigo-400" />
+                <input
+                  type="tel"
+                  value={profile.phone}
                   onChange={e => setProfile({...profile, phone: e.target.value})}
-                  className={`${inputClass} pl-10`} placeholder="10-digit number" />
+                  className={`${inputClass} pl-10`}
+                  placeholder="10-digit number"
+                />
               </div>
             </div>
 
             <div>
-              <label className="text-slate-500 text-sm mb-1 block">Email</label>
+              <label className="text-xs font-extrabold text-slate-600 uppercase tracking-wider mb-1.5 block">Email (Read Only)</label>
               <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                <input type="email" value={user?.email || ""} disabled
-                  className={`${inputClass} pl-10 opacity-50 cursor-not-allowed`} />
+                <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                <input
+                  type="email"
+                  value={user?.email || ""}
+                  disabled
+                  className={`${inputClass} pl-10 opacity-60 cursor-not-allowed`}
+                />
               </div>
             </div>
 
             <div>
-              <label className="text-slate-500 text-sm mb-1 block">Blood Group</label>
+              <label className="text-xs font-extrabold text-slate-600 uppercase tracking-wider mb-1.5 block">Blood Group</label>
               <div className="relative">
-                <Heart className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                <select value={profile.blood_group}
+                <Heart className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-rose-500" />
+                <select
+                  value={profile.blood_group}
                   onChange={e => setProfile({...profile, blood_group: e.target.value})}
-                  className={`${inputClass} pl-10 appearance-none`}>
-                  <option value="" className="bg-white">Select blood group</option>
+                  className={`${inputClass} pl-10 appearance-none`}
+                >
+                  <option value="">Select blood group</option>
                   {bloodGroups.map(b => (
-                    <option key={b} value={b} className="bg-white">{b}</option>
+                    <option key={b} value={b}>{b}</option>
                   ))}
                 </select>
               </div>
@@ -259,88 +279,111 @@ export default function Profile() {
           </div>
 
           <div>
-            <label className="text-slate-500 text-sm mb-1 block">Home Address</label>
+            <label className="text-xs font-extrabold text-slate-600 uppercase tracking-wider mb-1.5 block">Home Address</label>
             <div className="relative">
-              <Home className="absolute left-3 top-3 w-4 h-4 text-slate-400" />
-              <textarea value={profile.home_address}
+              <Home className="absolute left-3.5 top-3.5 w-4 h-4 text-indigo-400" />
+              <textarea
+                value={profile.home_address}
                 onChange={e => setProfile({...profile, home_address: e.target.value})}
-                rows={2} placeholder="Your home address"
-                className={`${inputClass} pl-10 resize-none`} />
+                rows={2}
+                placeholder="Your home address"
+                className={`${inputClass} pl-10 resize-none`}
+              />
             </div>
           </div>
 
-          <button onClick={handleProfileSave} disabled={saving}
-            className="w-full bg-brand-500 hover:bg-brand-600 disabled:opacity-50 text-white font-semibold py-3 rounded-xl transition flex items-center justify-center gap-2">
+          <button
+            onClick={handleProfileSave}
+            disabled={saving}
+            className="w-full brand-gradient animated-gradient text-white font-extrabold py-3.5 rounded-2xl shadow-lg shadow-indigo-300 hover:scale-[1.01] active:scale-95 transition-all flex items-center justify-center gap-2 disabled:opacity-50 text-sm"
+          >
             <Save className="w-4 h-4" />
-            {saving ? "Saving..." : "Save Profile"}
+            <span>{saving ? "Saving Changes..." : "Save Profile Details"}</span>
           </button>
         </div>
 
-        {/* Emergency Contacts */}
-        <div className="glass p-6 space-y-4">
+        {/* Emergency Contacts Management */}
+        <div className="glass p-6 sm:p-7 border border-white/90 shadow-xl shadow-indigo-500/10 space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-slate-800 font-semibold flex items-center gap-2">
-              <Phone className="w-4 h-4 text-danger" />
-              Emergency Contacts
-              <span className="text-xs text-slate-400">({contacts.length})</span>
+            <h2 className="text-slate-800 font-extrabold text-base flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-rose-500 to-red-600 text-white flex items-center justify-center shadow-md shadow-rose-300">
+                <Phone className="w-4 h-4" />
+              </div>
+              <span>Emergency Guardians</span>
+              <span className="text-xs font-bold text-slate-400">({contacts.length})</span>
             </h2>
-            <button onClick={() => { setShowAddForm(!showAddForm); setError(""); }}
-              className="flex items-center gap-2 bg-brand-100 hover:bg-brand-100 text-brand-500 text-sm px-3 py-1.5 rounded-xl transition">
-              <Plus className="w-4 h-4" />
-              Add Contact
+            <button
+              onClick={() => { setShowAddForm(!showAddForm); setError(""); }}
+              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-extrabold bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-md shadow-purple-500/20 hover:scale-105 active:scale-95 transition-transform"
+            >
+              <Plus className="w-3.5 h-3.5" />
+              <span>Add Contact</span>
             </button>
           </div>
 
-          <div className="bg-red-50 border border-red-200 rounded-xl p-3">
-            <p className="text-danger text-xs font-medium">
-              🚨 All contacts receive SOS email alert with live location
+          <div className="bg-gradient-to-r from-rose-50 to-pink-50 border border-rose-200 rounded-2xl p-4">
+            <p className="text-rose-700 text-xs font-black">
+              🚨 Live SOS Broadcast List
             </p>
-            <p className="text-slate-500 text-xs mt-1">
-              Add as many people as you need — email is required for SOS notifications
+            <p className="text-slate-600 text-xs mt-0.5 font-medium">
+              All registered guardians receive instant SMS and Email notifications with your live Google Maps coordinates when SOS is triggered.
             </p>
           </div>
 
           {contacts.length === 0 ? (
-            <div className="text-center py-6 border border-dashed border-slate-200 rounded-xl">
-              <Phone className="w-8 h-8 text-slate-500 mx-auto mb-2" />
-              <p className="text-slate-500 text-sm">No emergency contacts yet</p>
-              <p className="text-slate-500 text-xs mt-1">Add someone who can help in emergencies</p>
+            <div className="text-center py-8 border-2 border-dashed border-slate-200 rounded-2xl">
+              <Phone className="w-10 h-10 text-slate-300 mx-auto mb-2" />
+              <p className="text-slate-700 font-bold text-sm">No emergency guardians registered</p>
+              <p className="text-slate-400 text-xs mt-1">Tap Add Contact above to safeguard your travels.</p>
             </div>
           ) : (
             <div className="space-y-3">
               {contacts.map((contact, i) => (
-                <div key={contact.id || i}
-                  className="st-v2-contact flex items-center justify-between p-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-indigo-500 to-pink-500 flex items-center justify-center shrink-0 shadow-md shadow-indigo-200/60">
-                      <span className="text-white font-black text-sm">{i + 1}</span>
+                <div
+                  key={contact.id || i}
+                  className="p-4 rounded-2xl bg-gradient-to-r from-white via-indigo-50/20 to-purple-50/20 border border-indigo-100 hover:border-purple-300 transition-all flex items-center justify-between gap-3"
+                >
+                  <div className="flex items-center gap-3.5 min-w-0">
+                    <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 text-white flex items-center justify-center font-black text-sm shadow-md shrink-0">
+                      {i + 1}
                     </div>
-                    <div>
-                      <p className="text-slate-800 font-medium">{contact.name}</p>
-                      <p className="text-slate-500 text-sm">{contact.phone}</p>
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-2">
+                        <p className="text-slate-800 font-bold text-sm truncate">{contact.name}</p>
+                        <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600">
+                          {contact.relation}
+                        </span>
+                      </div>
+                      <p className="text-slate-500 text-xs font-mono">{contact.phone}</p>
                       {contact.email ? (
-                        <p className="text-brand-500 text-xs">{contact.email}</p>
+                        <p className="text-indigo-600 text-xs truncate flex items-center gap-1">
+                          <Mail className="w-3 h-3 text-indigo-400" /> {contact.email}
+                        </p>
                       ) : (
-                        <p className="text-moderate text-xs">⚠️ No email — tap Edit to add one</p>
+                        <p className="text-amber-600 text-xs font-semibold">⚠️ No email — tap Edit to add email</p>
                       )}
-                      <p className="text-slate-400 text-xs">{contact.relation}</p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-2">
+
+                  <div className="flex items-center gap-2 shrink-0">
                     {contact.source === "registration" ? (
                       <>
-                        <span className="text-xs bg-brand-100 text-brand-500 px-2 py-1 rounded-full">
+                        <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-full bg-gradient-to-r from-amber-400 to-orange-500 text-white shadow-sm">
                           Primary
                         </span>
-                        <button onClick={() => openEditPrimary(contact)}
-                          className="w-8 h-8 bg-white hover:bg-slate-100 text-slate-600 rounded-lg flex items-center justify-center transition">
-                          <Pencil className="w-4 h-4" />
+                        <button
+                          onClick={() => openEditPrimary(contact)}
+                          className="w-8 h-8 bg-white hover:bg-slate-100 text-slate-700 rounded-xl flex items-center justify-center transition border border-slate-200"
+                        >
+                          <Pencil className="w-3.5 h-3.5" />
                         </button>
                       </>
                     ) : (
-                      <button onClick={() => handleDeleteContact(contact.id)}
-                        className="w-8 h-8 bg-red-50 hover:bg-red-100 text-danger rounded-lg flex items-center justify-center transition">
-                        <Trash2 className="w-4 h-4" />
+                      <button
+                        onClick={() => handleDeleteContact(contact.id)}
+                        className="w-8 h-8 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-xl flex items-center justify-center transition border border-rose-200"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
                       </button>
                     )}
                   </div>
@@ -350,165 +393,144 @@ export default function Profile() {
           )}
 
           {editingPrimary && (
-            <div className="border border-brand-200 bg-brand-50 rounded-xl p-4 space-y-3">
+            <div className="border border-purple-200 bg-purple-50/50 rounded-2xl p-5 space-y-3.5 animate-fade-in">
               <div className="flex items-center justify-between">
-                <h3 className="text-slate-800 text-sm font-semibold">Edit Primary Contact</h3>
-                <button onClick={() => { setEditingPrimary(false); setError(""); }}
-                  className="text-slate-400 hover:text-slate-800">
+                <h3 className="text-slate-800 text-sm font-extrabold">Edit Primary Contact</h3>
+                <button onClick={() => { setEditingPrimary(false); setError(""); }} className="text-slate-400 hover:text-slate-800">
                   <X className="w-4 h-4" />
                 </button>
               </div>
 
               <div>
-                <label className="text-slate-500 text-xs mb-1 block">Full Name *</label>
-                <input type="text" value={primaryForm.name}
+                <label className="text-xs font-extrabold text-slate-600 mb-1 block">Full Name *</label>
+                <input
+                  type="text"
+                  value={primaryForm.name}
                   onChange={e => setPrimaryForm({...primaryForm, name: e.target.value})}
-                  className={inputClass} />
+                  className={inputClass}
+                />
               </div>
 
               <div>
-                <label className="text-slate-500 text-xs mb-1 block">Phone Number *</label>
-                <input type="tel" value={primaryForm.phone}
+                <label className="text-xs font-extrabold text-slate-600 mb-1 block">Phone Number *</label>
+                <input
+                  type="tel"
+                  value={primaryForm.phone}
                   onChange={e => setPrimaryForm({...primaryForm, phone: e.target.value})}
-                  className={inputClass} />
+                  className={inputClass}
+                />
               </div>
 
               <div>
-                <label className="text-slate-500 text-xs mb-1 block">
-                  Email Address * (SOS alerts sent here)
-                </label>
-                <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                  <input type="email" value={primaryForm.email}
-                    onChange={e => setPrimaryForm({...primaryForm, email: e.target.value})}
-                    placeholder="emergency@gmail.com"
-                    className={`${inputClass} pl-10`} />
-                </div>
+                <label className="text-xs font-extrabold text-slate-600 mb-1 block">Email Address * (For SOS Link)</label>
+                <input
+                  type="email"
+                  value={primaryForm.email}
+                  onChange={e => setPrimaryForm({...primaryForm, email: e.target.value})}
+                  className={inputClass}
+                  placeholder="guardian@example.com"
+                />
               </div>
 
-              <div>
-                <label className="text-slate-500 text-xs mb-1 block">Relation</label>
-                <select value={primaryForm.relation}
-                  onChange={e => setPrimaryForm({...primaryForm, relation: e.target.value})}
-                  className={`${inputClass} appearance-none`}>
-                  {relations.map(r => (
-                    <option key={r} value={r} className="bg-white">{r}</option>
-                  ))}
-                </select>
-              </div>
-
-              <div className="flex gap-3 pt-1">
+              <div className="flex gap-3 pt-2">
                 <button
                   onClick={() => { setEditingPrimary(false); setError(""); }}
-                  className="flex-1 bg-white hover:bg-slate-100 text-slate-500 py-2.5 rounded-xl transition text-sm">
+                  className="flex-1 bg-white hover:bg-slate-100 text-slate-600 font-bold py-2.5 rounded-xl transition text-xs border border-slate-200"
+                >
                   Cancel
                 </button>
-                <button onClick={handleSavePrimary} disabled={savingPrimary}
-                  className="flex-1 bg-brand-500 hover:bg-brand-600 disabled:opacity-50 text-white py-2.5 rounded-xl transition text-sm flex items-center justify-center gap-2">
-                  <Save className="w-4 h-4" />
-                  {savingPrimary ? "Saving..." : "Save Changes"}
+                <button
+                  onClick={handleSavePrimary}
+                  disabled={savingPrimary}
+                  className="flex-1 brand-gradient animated-gradient text-white font-extrabold py-2.5 rounded-xl transition text-xs shadow-md shadow-indigo-300"
+                >
+                  {savingPrimary ? "Saving..." : "Save Primary"}
                 </button>
               </div>
             </div>
           )}
 
           {showAddForm && (
-            <div className="border border-brand-200 bg-brand-50 rounded-xl p-4 space-y-3">
-              <h3 className="text-slate-800 text-sm font-semibold">
-                Add Emergency Contact
-              </h3>
+            <div className="border border-purple-200 bg-purple-50/50 rounded-2xl p-5 space-y-3.5 animate-fade-in">
+              <h3 className="text-slate-800 text-sm font-extrabold">Add New Emergency Contact</h3>
 
               <div>
-                <label className="text-slate-500 text-xs mb-1 block">Full Name *</label>
-                <input type="text" value={newContact.name}
+                <label className="text-xs font-extrabold text-slate-600 mb-1 block">Full Name *</label>
+                <input
+                  type="text"
+                  value={newContact.name}
                   onChange={e => setNewContact({...newContact, name: e.target.value})}
-                  placeholder="Contact's full name" className={inputClass} />
+                  placeholder="e.g. Alex Green"
+                  className={inputClass}
+                />
               </div>
 
-              <div>
-                <label className="text-slate-500 text-xs mb-1 block">Phone Number *</label>
-                <input type="tel" value={newContact.phone}
-                  onChange={e => setNewContact({...newContact, phone: e.target.value})}
-                  placeholder="10-digit mobile number" className={inputClass} />
-              </div>
-
-              <div>
-                <label className="text-slate-500 text-xs mb-1 block">
-                  Email Address * (SOS alerts sent here)
-                </label>
-                <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                  <input type="email" value={newContact.email}
-                    onChange={e => setNewContact({...newContact, email: e.target.value})}
-                    placeholder="emergency@gmail.com"
-                    className={`${inputClass} pl-10`} />
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="text-xs font-extrabold text-slate-600 mb-1 block">Phone Number *</label>
+                  <input
+                    type="tel"
+                    value={newContact.phone}
+                    onChange={e => setNewContact({...newContact, phone: e.target.value})}
+                    placeholder="10-digit number"
+                    className={inputClass}
+                  />
                 </div>
-                <p className="text-slate-500 text-xs mt-1">
-                  They will receive email with your live Google Maps location on SOS
-                </p>
+                <div>
+                  <label className="text-xs font-extrabold text-slate-600 mb-1 block">Relation</label>
+                  <select
+                    value={newContact.relation}
+                    onChange={e => setNewContact({...newContact, relation: e.target.value})}
+                    className={`${inputClass} appearance-none`}
+                  >
+                    {relations.map(r => (
+                      <option key={r} value={r}>{r}</option>
+                    ))}
+                  </select>
+                </div>
               </div>
 
               <div>
-                <label className="text-slate-500 text-xs mb-1 block">Relation</label>
-                <select value={newContact.relation}
-                  onChange={e => setNewContact({...newContact, relation: e.target.value})}
-                  className={`${inputClass} appearance-none`}>
-                  {relations.map(r => (
-                    <option key={r} value={r} className="bg-white">{r}</option>
-                  ))}
-                </select>
+                <label className="text-xs font-extrabold text-slate-600 mb-1 block">Email Address *</label>
+                <input
+                  type="email"
+                  value={newContact.email}
+                  onChange={e => setNewContact({...newContact, email: e.target.value})}
+                  placeholder="emergency@example.com"
+                  className={inputClass}
+                />
               </div>
 
-              <div className="flex gap-3 pt-1">
+              <div className="flex gap-3 pt-2">
                 <button
-                  onClick={() => {
-                    setShowAddForm(false);
-                    setError("");
-                    setNewContact({ name:"", phone:"", email:"", relation:"Parent" });
-                  }}
-                  className="flex-1 bg-white hover:bg-slate-100 text-slate-500 py-2.5 rounded-xl transition text-sm">
+                  onClick={() => setShowAddForm(false)}
+                  className="flex-1 bg-white hover:bg-slate-100 text-slate-600 font-bold py-2.5 rounded-xl transition text-xs border border-slate-200"
+                >
                   Cancel
                 </button>
-                <button onClick={handleAddContact} disabled={adding}
-                  className="flex-1 bg-brand-500 hover:bg-brand-600 disabled:opacity-50 text-white py-2.5 rounded-xl transition text-sm flex items-center justify-center gap-2">
-                  <Plus className="w-4 h-4" />
-                  {adding ? "Adding..." : "Add Contact"}
+                <button
+                  onClick={handleAddContact}
+                  disabled={adding}
+                  className="flex-1 brand-gradient animated-gradient text-white font-extrabold py-2.5 rounded-xl transition text-xs shadow-md shadow-indigo-300"
+                >
+                  {adding ? "Adding..." : "Add Guardian"}
                 </button>
               </div>
             </div>
           )}
         </div>
 
-        {/* Safety Info */}
-        <div className="glass p-5">
-          <h3 className="text-slate-800 font-semibold mb-3 flex items-center gap-2">
-            <Shield className="w-4 h-4 text-safe" />
-            How Emergency Contacts Are Notified
-          </h3>
-          <div className="space-y-2">
-            {[
-              "All contacts receive email when you press the SOS button",
-              "Auto-alert sent if you don't respond to danger zone in 30 seconds",
-              "Email includes live Google Maps location link",
-              "Email shows your name, phone, zone name and exact time",
-              "Contacts listed in order — contact 1 is your primary contact",
-            ].map((text, i) => (
-              <div key={i} className="flex items-start gap-2 text-sm text-slate-500">
-                <span className="text-safe mt-0.5 shrink-0">✓</span>
-                {text}
-              </div>
-            ))}
-          </div>
+        {/* Sign Out Card */}
+        <div className="glass p-5 border border-white/90">
+          <button
+            onClick={handleLogout}
+            className="w-full bg-gradient-to-r from-rose-500 to-red-600 hover:from-rose-600 hover:to-red-700 text-white font-black py-3.5 rounded-2xl shadow-lg shadow-rose-500/25 transition-all flex items-center justify-center gap-2 text-sm"
+          >
+            <LogOut className="w-4 h-4" />
+            <span>Sign Out of SafeTrail</span>
+          </button>
         </div>
-            {/* Logout */}
-<div className="glass p-5">
-  <button
-    onClick={handleLogout}
-    className="w-full bg-red-600 hover:bg-red-700 text-slate-800 font-semibold py-3 rounded-xl transition"
-  >
-    Logout
-  </button>
-</div>
+
       </div>
     </MainLayout>
   );
